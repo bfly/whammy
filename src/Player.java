@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class Player {
     final int Whammy = -1;
     Scanner scanner = new Scanner(System.in);
+    Cell cell;
 
     private String name;
     private int money;
@@ -36,13 +37,13 @@ public class Player {
             System.out.print(this.toString());
             System.out.print("Spin (Y/N) ");
             if (scanner.next().equalsIgnoreCase("Y")) {
-                spin = board.spin();
-                postMoney(spin);
-                if (spin == Whammy) {
+                cell = board.spin();
+                postMoney(cell.getValue());
+                if (cell.getValue() == Whammy) {
                     System.out.println("Spun Whammy!");
                     return 0;
                 } else {
-                    System.out.println("Spun $" + spin);
+                    System.out.println("Spun " + cell.toString());
                 }
             } else {
                 return money;
