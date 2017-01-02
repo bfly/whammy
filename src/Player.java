@@ -1,11 +1,10 @@
-import java.util.Scanner;
-
+import static javax.swing.JOptionPane.*;
 /**
  * Created by Khalid Muteb on 11/1/2016.
+ * Modified by Khalid Muteb on 11/29/2016.
  */
 public class Player {
     final int Whammy = -1;
-    Scanner scanner = new Scanner(System.in);
     Cell cell;
 
     private String name;
@@ -26,34 +25,28 @@ public class Player {
     }
 
     public int takeTurn(Board board) {
-        int spin;
-        System.out.println();
-        System.out.println(this.name + "\'s turn");
-        System.out.println();
-        //
-        // loop until a player spins a Whammy or passes to next player
-        //
+/*
+ *      loop until a player spins a Whammy or passes to next player
+*/
         while (true) {
-            System.out.print(this.toString());
-            System.out.print("Spin (Y/N) ");
-            if (scanner.next().equalsIgnoreCase("Y")) {
-                cell = board.spin();
-                postMoney(cell.getValue());
-                if (cell.getValue() == Whammy) {
-                    System.out.println("Spun Whammy!");
-                    return 0;
-                } else {
-                    System.out.println("Spun " + cell.toString());
-                }
-            } else {
+            int result = showConfirmDialog(null, name + " has $" + money + "\nSpin?", name, YES_NO_OPTION);
+            if (result == NO_OPTION) {
                 return money;
+            }
+            cell = board.spin();
+            postMoney(cell.getValue());
+            if (cell.getValue() == Whammy) {
+                showMessageDialog(null, "WHAMMY!", "Turn Over", INFORMATION_MESSAGE);
+                return 0;
+            } else {
+                showMessageDialog(null, "Hit $" + cell.getValue(), "Money Cell!", INFORMATION_MESSAGE);
             }
         }
     }
 
     @Override
     public String toString() {
-        return name + ": $" + money + " ";
+        return name + " has $" + money;
     }
 
     public String getName() {

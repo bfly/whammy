@@ -1,8 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * Created by Khalid Muteb on 11/1/2016.
@@ -10,65 +6,50 @@ import java.util.Scanner;
 public class WhammyGame {
     private ArrayList<Player> players;
     private Board board;
-    private Scanner scanner;
+    static char nl = '\n';
 
     public WhammyGame() {       // constructor
         board = new Board();
         players = new ArrayList<>();
-        scanner = new Scanner(System.in);
     }
 
-    public void playGame() throws IOException {
-        System.out.print("Enter number of players: ");
-        String line = scanner.nextLine();
-        int numberOfPlayers = 0;
-        try {
-            numberOfPlayers = Integer.parseInt(line);
-        } catch (Exception e) {
-            System.out.println("Oops encountered an input mismatch type error: " + e);
-        }
-        String name;
-        //
-        // Load players
-        //
-        for (int i = 0; i < numberOfPlayers; i++) {
-            System.out.print("Enter name of player number: " + (i + 1) + " ");
-            name = scanner.nextLine();
-            players.add(new Player(name));
-        }
+    public String addPlayer(String playerName) {
+        Player player = new Player(playerName);
+        players.add(player);
+        return player.toString();
+    }
+
+    public int getPlayerCount() {
+        return players.size();
+    }
+
+    public String playGame() {
         int winnings;
         boolean winner = false;
-        //
-        // loop through players until one player exceed $10,000
-        //
+        String gameResults = "Let's Play" + nl;
+/*
+ *      loop through players until one player exceeds $10,000
+*/
         while (!winner) {
             for (Player p : players) {
                 winnings = p.takeTurn(board);
+                gameResults += "Player: " + p.getName() + " scored " + p.getMoney() + nl;
                 if (winnings >= 10000) {
-                    System.out.println(p.getName() + " won with $" + p.getMoney() + " !!!");
-                    winner = true;
-                    break;
+                    gameResults += "Game over!!" + nl;
+                    gameResults += nl;
+                    for (Player p2: players) {
+                        if(p.equals(p2)) {          // winner
+                            gameResults += p2.getName() + " won with $" + p2.getMoney() + " !!!" + nl;
+                        } else {                    // also rans
+                            gameResults += "Player: " + p2.getName() + " scored " + p2.getMoney() + nl;
+                        }
+                        gameResults += nl;
+                    }
+                    players = new ArrayList<>();
+                    return gameResults;
                 }
             }
         }
-        //
-        // outout GameResults
-        //
-        try {
-            FileWriter writer = new FileWriter("GameResults.txt", false);
-            BufferedWriter bw = new BufferedWriter(writer);
-
-            bw.write("Number of players is " + numberOfPlayers);
-            bw.newLine();
-            for (Player p : players) {
-                bw.write(p.toString());
-                bw.newLine();
-            }
-            bw.close();
-
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
+        return gameResults;
     }
 }
